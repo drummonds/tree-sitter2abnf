@@ -1,0 +1,45 @@
+version: "3"
+
+vars:
+  MODULE: github.com/drummonds/tree-sitter2abnf
+
+tasks:
+  fmt:
+    desc: Format code
+    cmds:
+      - go fmt ./...
+
+  vet:
+    desc: Vet code
+    cmds:
+      - go vet ./...
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
+
+  check:
+    desc: Format, vet, and test
+    cmds:
+      - task: fmt
+      - task: vet
+      - task: test
+
+  build:
+    desc: Build binary
+    cmds:
+      - go build -o tree-sitter2abnf ./cmd/tree-sitter2abnf
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -f tree-sitter2abnf
+      - rm -rf dist/
+
+  deps:tidy:
+    desc: Tidy dependencies
+    cmds:
+      - go mod tidy
+
+

@@ -1,0 +1,11 @@
+# Binaries
+tree-sitter2abnf
+/dist/
+*.exe
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store

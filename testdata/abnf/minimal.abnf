@@ -1,0 +1,10 @@
+; @grammar "minimal"
+; @extras (@pattern("\\s"))
+
+source = *_item
+
+_item = (word / number)
+
+word = @pattern("[a-zA-Z]+")
+
+number = [%s"-"] @pattern("[0-9]+")

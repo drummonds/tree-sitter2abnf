@@ -1,0 +1,31 @@
+; @grammar "json"
+; @extras (@pattern("\\s") / comment)
+; @supertypes (_value)
+
+document = *_value
+
+_value = (object / array / number / string / true / false / null)
+
+object = %s"{" [pair *(%s"," pair)] %s"}"
+
+pair = @field(key) string %s":" @field(value) _value
+
+array = %s"[" [_value *(%s"," _value)] %s"]"
+
+string = (%s"\"" %s"\"" / %s"\"" _string_content %s"\"")
+
+_string_content = 1*((string_content / escape_sequence))
+
+string_content = @immediate-token(@prec(1) @pattern("[^\\\\\"\\n]+"))
+
+escape_sequence = @immediate-token(%s"\\" @pattern("(\\\"|\\\\|\\/|b|f|n|r|t|u)"))
+
+number = @token(([%s"-"] (%s"0" / @pattern("[1-9]") [@pattern("\\d+")])) %s"." [@pattern("\\d+")] [(%s"e" / %s"E") ([%s"-"] @pattern("\\d+"))] / ([%s"-"] (%s"0" / @pattern("[1-9]") [@pattern("\\d+")])) [(%s"e" / %s"E") ([%s"-"] @pattern("\\d+"))])
+
+true = %s"true"
+
+false = %s"false"
+
+null = %s"null"
+
+comment = @token(%s"//" @pattern(".*") / %s"/*" @pattern("[^*]*\\*+([^/*][^*]*\\*+)*") %s"/")
