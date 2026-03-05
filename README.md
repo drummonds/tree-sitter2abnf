@@ -1,6 +1,6 @@
 # tree-sitter2abnf
 
-Converts tree-sitter `grammar.json` files to extended ABNF (RFC 5234) and back.
+Converts [tree-sitter](https://tree-sitter.github.io/tree-sitter/) `grammar.json` files to extended ABNF ([RFC 5234](https://www.rfc-editor.org/rfc/rfc5234)) and back.
 
 ## Install
 
@@ -98,3 +98,10 @@ object = %s"{" [pair *(%s"," pair)] %s"}"
 
 pair = @field(key) string %s":" @field(value) _value
 ```
+
+## References
+
+- [tree-sitter](https://tree-sitter.github.io/tree-sitter/) — the parser generator whose grammar format this tool converts
+- [tree-sitter grammar DSL](https://tree-sitter.github.io/tree-sitter/creating-parsers/writing-the-grammar.html) — the `grammar.js` authoring guide
+- [RFC 5234](https://www.rfc-editor.org/rfc/rfc5234) — ABNF specification
+- [RFC 7405](https://www.rfc-editor.org/rfc/rfc7405) — case-sensitive string literals in ABNF

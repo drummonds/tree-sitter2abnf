@@ -1,5 +1,5 @@
 # Binaries
-tree-sitter2abnf
+/tree-sitter2abnf
 /dist/
 *.exe
 
