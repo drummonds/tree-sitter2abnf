@@ -2,6 +2,7 @@ package abnf
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/drummonds/tree-sitter2abnf/internal/grammar"
@@ -14,15 +15,22 @@ func Write(g *grammar.Grammar) string {
 	// Grammar-level directives
 	writeDirectives(&b, g)
 
-	if len(g.Rules) > 0 {
-		b.WriteString("\n")
+	if len(g.Rules) == 0 {
+		return b.String()
 	}
 
-	// Rules
-	for i, nr := range g.Rules {
-		if i > 0 {
+	sorted, levels := sortRulesByComplexity(g.Rules)
+	prevLevel := -1
+	for i, nr := range sorted {
+		level := levels[nr.Name]
+		if prevLevel > 0 && level == 0 {
+			b.WriteString("\n; --- Tokens ---\n\n")
+		} else if i > 0 {
+			b.WriteString("\n")
+		} else {
 			b.WriteString("\n")
 		}
+		prevLevel = level
 		writeNamedRule(&b, nr)
 	}
 
@@ -258,4 +266,96 @@ func needsParens(r grammar.Rule) bool {
 	default:
 		return false
 	}
+}
+
+// sortRulesByComplexity returns rules sorted with complex (structural) rules
+// first and leaf (token) rules last. Within each level, original order is preserved.
+func sortRulesByComplexity(rules []grammar.NamedRule) ([]grammar.NamedRule, map[string]int) {
+	levels := computeRuleLevels(rules)
+	sorted := make([]grammar.NamedRule, len(rules))
+	copy(sorted, rules)
+	origIdx := make(map[string]int, len(rules))
+	for i, nr := range rules {
+		origIdx[nr.Name] = i
+	}
+	sort.SliceStable(sorted, func(i, j int) bool {
+		li, lj := levels[sorted[i].Name], levels[sorted[j].Name]
+		if li != lj {
+			return li > lj
+		}
+		return origIdx[sorted[i].Name] < origIdx[sorted[j].Name]
+	})
+	return sorted, levels
+}
+
+// computeRuleLevels assigns each rule a dependency depth.
+// Level 0 = leaf (no references to other grammar rules), higher = more complex.
+func computeRuleLevels(rules []grammar.NamedRule) map[string]int {
+	ruleSet := make(map[string]bool, len(rules))
+	deps := make(map[string]map[string]bool, len(rules))
+	for _, nr := range rules {
+		ruleSet[nr.Name] = true
+		deps[nr.Name] = collectSymbolRefs(nr.Rule)
+	}
+	// Keep only references to other rules in this grammar, excluding self-refs
+	for name, refs := range deps {
+		for ref := range refs {
+			if !ruleSet[ref] || ref == name {
+				delete(refs, ref)
+			}
+		}
+	}
+
+	levels := make(map[string]int, len(rules))
+	remaining := make(map[string]bool, len(rules))
+	for name := range ruleSet {
+		remaining[name] = true
+	}
+	for level := 0; len(remaining) > 0; level++ {
+		var resolved []string
+		for name := range remaining {
+			allDone := true
+			for dep := range deps[name] {
+				if remaining[dep] {
+					allDone = false
+					break
+				}
+			}
+			if allDone {
+				resolved = append(resolved, name)
+			}
+		}
+		if len(resolved) == 0 {
+			// Remaining rules form cycles — assign current level
+			for name := range remaining {
+				levels[name] = level
+			}
+			break
+		}
+		for _, name := range resolved {
+			levels[name] = level
+			delete(remaining, name)
+		}
+	}
+	return levels
+}
+
+// collectSymbolRefs returns the set of SYMBOL names referenced by a rule tree.
+func collectSymbolRefs(r grammar.Rule) map[string]bool {
+	refs := make(map[string]bool)
+	var walk func(grammar.Rule)
+	walk = func(r grammar.Rule) {
+		if r.Type == grammar.TypeSYMBOL {
+			refs[r.Name] = true
+			return
+		}
+		for _, m := range r.Members {
+			walk(m)
+		}
+		if r.Content != nil {
+			walk(*r.Content)
+		}
+	}
+	walk(r)
+	return refs
 }

@@ -57,11 +57,18 @@ func assertGrammarEqual(t *testing.T, a, b *grammar.Grammar) {
 	if len(a.Rules) != len(b.Rules) {
 		t.Fatalf("rules count: %d vs %d", len(a.Rules), len(b.Rules))
 	}
-	for i := range a.Rules {
-		if a.Rules[i].Name != b.Rules[i].Name {
-			t.Errorf("rule[%d] name: %q vs %q", i, a.Rules[i].Name, b.Rules[i].Name)
+	// Compare rules by name (unordered) since Write sorts by complexity
+	bRules := make(map[string]grammar.Rule, len(b.Rules))
+	for _, nr := range b.Rules {
+		bRules[nr.Name] = nr.Rule
+	}
+	for _, nr := range a.Rules {
+		br, ok := bRules[nr.Name]
+		if !ok {
+			t.Errorf("rule %q missing in round-tripped grammar", nr.Name)
+			continue
 		}
-		assertRuleEqual(t, a.Rules[i].Name, a.Rules[i].Rule, b.Rules[i].Rule)
+		assertRuleEqual(t, nr.Name, nr.Rule, br)
 	}
 
 	// Compare extras

@@ -5,6 +5,8 @@ source = *_item
 
 _item = (word / number)
 
+; --- Tokens ---
+
 word = @pattern("[a-zA-Z]+")
 
 number = [%s"-"] @pattern("[0-9]+")

@@ -16,6 +16,8 @@ string = (%s"\"" %s"\"" / %s"\"" _string_content %s"\"")
 
 _string_content = 1*((string_content / escape_sequence))
 
+; --- Tokens ---
+
 string_content = @immediate-token(@prec(1) @pattern("[^\\\\\"\\n]+"))
 
 escape_sequence = @immediate-token(%s"\\" @pattern("(\\\"|\\\\|\\/|b|f|n|r|t|u)"))
