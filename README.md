@@ -99,6 +99,15 @@ object = %s"{" [pair *(%s"," pair)] %s"}"
 pair = @field(key) string %s":" @field(value) _value
 ```
 
+## Links
+
+| | |
+|---|---|
+| Documentation | https://h3-tree-sitter2abnf.statichost.page/ |
+| Source (Codeberg) | https://codeberg.org/hum3/tree-sitter2abnf |
+| Mirror (GitHub) | https://github.com/drummonds/tree-sitter2abnf |
+| Docs repo | https://codeberg.org/hum3/tree-sitter2abnf-docs |
+
 ## References
 
 - [tree-sitter](https://tree-sitter.github.io/tree-sitter/) — the parser generator whose grammar format this tool converts
