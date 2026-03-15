@@ -19,6 +19,11 @@ archives:
       - goos: windows
         format: zip
 
+release:
+  github:
+    owner: drummonds
+    name: tree-sitter2abnf
+
 changelog:
   sort: asc
   filters:
