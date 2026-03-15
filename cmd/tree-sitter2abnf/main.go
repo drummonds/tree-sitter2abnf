@@ -74,7 +74,9 @@ func main() {
 			fatal(err)
 		}
 	} else {
-		os.Stdout.Write(result)
+		if _, err := os.Stdout.Write(result); err != nil {
+			fatal(err)
+		}
 	}
 }
 

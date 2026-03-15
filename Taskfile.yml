@@ -19,11 +19,17 @@ tasks:
     cmds:
       - go test ./...
 
+  lint:
+    desc: Run golangci-lint
+    cmds:
+      - golangci-lint run ./...
+
   check:
-    desc: Format, vet, and test
+    desc: Format, vet, lint, and test
     cmds:
       - task: fmt
       - task: vet
+      - task: lint
       - task: test
 
   build:
@@ -31,11 +37,20 @@ tasks:
     cmds:
       - go build -o tree-sitter2abnf ./cmd/tree-sitter2abnf
 
+  docs:build:
+    desc: Build documentation (markdown to HTML)
+    cmds:
+      - task-plus md2html --file index.md --dst docs
+      - task-plus md2html --file README.md --dst docs
+      - task-plus md2html --file CHANGELOG.md --dst docs
+      - task-plus md2html --file ROADMAP.md --dst docs
+
   clean:
     desc: Clean build artifacts
     cmds:
       - rm -f tree-sitter2abnf
       - rm -rf dist/
+      - rm -f docs/*.html
 
   deps:tidy:
     desc: Tidy dependencies

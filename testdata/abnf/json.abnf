@@ -14,7 +14,7 @@ array = %s"[" [_value *(%s"," _value)] %s"]"
 
 string = (%s"\"" %s"\"" / %s"\"" _string_content %s"\"")
 
-_string_content = 1*((string_content / escape_sequence))
+_string_content = 1*(string_content / escape_sequence)
 
 ; --- Tokens ---
 

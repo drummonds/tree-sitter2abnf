@@ -106,7 +106,6 @@ pair = @field(key) string %s":" @field(value) _value
 | Documentation | https://h3-tree-sitter2abnf.statichost.page/ |
 | Source (Codeberg) | https://codeberg.org/hum3/tree-sitter2abnf |
 | Mirror (GitHub) | https://github.com/drummonds/tree-sitter2abnf |
-| Docs repo | https://codeberg.org/hum3/tree-sitter2abnf-docs |
 
 ## References
 

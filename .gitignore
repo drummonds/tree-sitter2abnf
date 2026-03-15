@@ -7,5 +7,8 @@
 .idea/
 .vscode/
 
+# Generated docs
+docs/*.html
+
 # OS
 .DS_Store

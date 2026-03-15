@@ -175,18 +175,18 @@ func writeRuleExpr(r grammar.Rule, inGroup bool) string {
 		return s
 
 	case grammar.TypeREPEAT:
-		inner := writeRuleExpr(*r.Content, false)
 		if needsParens(*r.Content) {
+			inner := writeRuleExpr(*r.Content, true)
 			return "*(" + inner + ")"
 		}
-		return "*" + inner
+		return "*" + writeRuleExpr(*r.Content, false)
 
 	case grammar.TypeREPEAT1:
-		inner := writeRuleExpr(*r.Content, false)
 		if needsParens(*r.Content) {
+			inner := writeRuleExpr(*r.Content, true)
 			return "1*(" + inner + ")"
 		}
-		return "1*" + inner
+		return "1*" + writeRuleExpr(*r.Content, false)
 
 	case grammar.TypePREC:
 		return writePrecExpr(AnnPrec, r)
