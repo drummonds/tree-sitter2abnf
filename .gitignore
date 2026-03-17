@@ -12,3 +12,7 @@ docs/*.html
 
 # OS
 .DS_Store
+
+# tp
+.tp-release-comment
+.tasks/
