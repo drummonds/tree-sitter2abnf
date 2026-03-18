@@ -135,7 +135,7 @@ func (p *parser) parseDirective(g *grammar.Grammar) error {
 		if err != nil {
 			return err
 		}
-		g.Word = s
+		g.Word = ToGrammarName(s)
 
 	case DirExtras:
 		rules, err := p.parseDirectiveRuleList()
@@ -234,7 +234,7 @@ func (p *parser) parseNameList() ([]string, error) {
 		if name == "" {
 			return nil, p.errorf("expected name")
 		}
-		names = append(names, name)
+		names = append(names, ToGrammarName(name))
 	}
 	return names, nil
 }
@@ -254,7 +254,7 @@ func (p *parser) parseNameGroup() ([]string, error) {
 		if name == "" {
 			return nil, p.errorf("expected name in conflict group")
 		}
-		names = append(names, name)
+		names = append(names, ToGrammarName(name))
 	}
 	return names, nil
 }
@@ -264,6 +264,7 @@ func (p *parser) parseRuleDef() (grammar.NamedRule, error) {
 	if name == "" {
 		return grammar.NamedRule{}, p.errorf("expected rule name")
 	}
+	name = ToGrammarName(name)
 	p.skipSpaces()
 
 	// Expect '=' or '=/'
@@ -606,7 +607,7 @@ func (p *parser) parseAtom() (grammar.Rule, error) {
 	default:
 		// Must be a rule name (ALPHA / "_") *(ALPHA / DIGIT / "-" / "_")
 		if isNameStart(p.peek()) {
-			name := p.readWord()
+			name := ToGrammarName(p.readWord())
 			return grammar.Rule{Type: grammar.TypeSYMBOL, Name: name}, nil
 		}
 		return grammar.Rule{}, p.errorf("unexpected character %q", string(p.peek()))

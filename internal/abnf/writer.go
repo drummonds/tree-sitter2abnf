@@ -41,7 +41,7 @@ func writeDirectives(b *strings.Builder, g *grammar.Grammar) {
 	fmt.Fprintf(b, "; %s %q\n", DirGrammar, g.Name)
 
 	if g.Word != "" {
-		fmt.Fprintf(b, "; %s %q\n", DirWord, g.Word)
+		fmt.Fprintf(b, "; %s %q\n", DirWord, ToABNFName(g.Word))
 	}
 
 	if len(g.Extras) > 0 {
@@ -61,7 +61,7 @@ func writeDirectives(b *strings.Builder, g *grammar.Grammar) {
 			if i > 0 {
 				b.WriteString(" / ")
 			}
-			b.WriteString(name)
+			b.WriteString(ToABNFName(name))
 		}
 		b.WriteString(")\n")
 	}
@@ -70,7 +70,12 @@ func writeDirectives(b *strings.Builder, g *grammar.Grammar) {
 		fmt.Fprintf(b, "; %s", DirConflicts)
 		for _, group := range g.Conflicts {
 			b.WriteString(" (")
-			b.WriteString(strings.Join(group, " "))
+			for i, name := range group {
+				if i > 0 {
+					b.WriteString(" ")
+				}
+				b.WriteString(ToABNFName(name))
+			}
 			b.WriteString(")")
 		}
 		b.WriteString("\n")
@@ -93,16 +98,17 @@ func writeDirectives(b *strings.Builder, g *grammar.Grammar) {
 			if i > 0 {
 				b.WriteString(" / ")
 			}
-			b.WriteString(name)
+			b.WriteString(ToABNFName(name))
 		}
 		b.WriteString(")\n")
 	}
 }
 
 func writeNamedRule(b *strings.Builder, nr grammar.NamedRule) {
+	name := ToABNFName(nr.Name)
 	rhs := writeRuleExpr(nr.Rule, false)
 	// Use =/ for multi-line alternatives if the line would be too long
-	line := fmt.Sprintf("%s = %s", nr.Name, rhs)
+	line := fmt.Sprintf("%s = %s", name, rhs)
 	if len(line) <= 120 {
 		b.WriteString(line)
 		b.WriteString("\n")
@@ -111,7 +117,7 @@ func writeNamedRule(b *strings.Builder, nr grammar.NamedRule) {
 
 	// Long rule: break alternatives onto separate lines
 	if nr.Rule.Type == grammar.TypeCHOICE {
-		fmt.Fprintf(b, "%s =\n", nr.Name)
+		fmt.Fprintf(b, "%s =\n", name)
 		for i, m := range nr.Rule.Members {
 			prefix := "    / "
 			if i == 0 {
@@ -143,7 +149,7 @@ func writeRuleExpr(r grammar.Rule, inGroup bool) string {
 		return fmt.Sprintf("%s(%q)", AnnPattern, r.StringValue())
 
 	case grammar.TypeSYMBOL:
-		return r.Name
+		return ToABNFName(r.Name)
 
 	case grammar.TypeSEQ:
 		parts := make([]string, len(r.Members))
