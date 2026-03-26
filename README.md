@@ -5,7 +5,7 @@ Converts [tree-sitter](https://tree-sitter.github.io/tree-sitter/) `grammar.json
 ## Install
 
 ```
-go install github.com/drummonds/tree-sitter2abnf/cmd/tree-sitter2abnf@latest
+go install codeberg.org/hum3/tree-sitter2abnf/cmd/tree-sitter2abnf@latest
 ```
 
 ## Usage

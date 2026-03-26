@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/drummonds/tree-sitter2abnf/internal/grammar"
+	"codeberg.org/hum3/tree-sitter2abnf/internal/grammar"
 )
 
 // Write converts a Grammar to extended ABNF text.

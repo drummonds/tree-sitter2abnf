@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/drummonds/tree-sitter2abnf/internal/grammar"
+	"codeberg.org/hum3/tree-sitter2abnf/internal/grammar"
 )
 
 var update = flag.Bool("update", false, "update golden files")

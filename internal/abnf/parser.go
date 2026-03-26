@@ -2,7 +2,7 @@ package abnf
 
 import (
 	"fmt"
-	"github.com/drummonds/tree-sitter2abnf/internal/grammar"
+	"codeberg.org/hum3/tree-sitter2abnf/internal/grammar"
 	"strconv"
 	"strings"
 )
